@@ -109,5 +109,4 @@ class City{
     List<City> selectedCities=City.citiesList;
     return selectedCities.where((city)=>city.isSelected==true).toList();
   }
-
 }
