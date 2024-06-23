@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/models/constants.dart';
+import 'package:weather_app/ui/home.dart';
 
 import '../models/city.dart';
 
@@ -75,7 +76,7 @@ class _WelcomeState extends State<Welcome> {
         backgroundColor: myConstants.secondaryColor,
         child:const Icon(Icons.pin_drop),
         onPressed: (){
-          print(selectedCities.length);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Home()));
         },
       ),
     );
