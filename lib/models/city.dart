@@ -27,7 +27,7 @@ class City{
     ),
     City(
         isSelected: false,
-        city:'Bengaluru',
+        city:'Bangalore',
         country:"India",
         isDefault: true
     ),
