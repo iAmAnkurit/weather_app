@@ -40,13 +40,12 @@ class _HomeState extends State<Home> {
         _weather = w;
       });
       temperature = _weather?.temperature?.celsius?.round() ?? 0;
-      weatherStateName = _weather?.areaName ?? '';
+      weatherStateName = _weather?.weatherDescription ?? '';
       humidity = _weather?.humidity?.round() ?? 0;
       windSpeed = _weather?.windSpeed?.round() ?? 0;
       maxTemp = _weather?.tempMax?.celsius?.round() ?? 0;
       currentDate =
           DateFormat('EEEE, d MMMM').format(_weather?.date ?? DateTime.now());
-
       imageUrl = _weather?.weatherDescription
               ?.toString()
               .replaceAll(' ', '')
@@ -127,10 +126,66 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
+          elevation: 10,
         ),
-        body: _weather == null
-            ? const Center(child: CircularProgressIndicator())
-            : Text(
-                '${_weather?.areaName ?? ''} - ${_weather?.temperature ?? ''}'));
+        body: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                location,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+              Text(
+                currentDate,
+                style: const TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              Container(
+                width: size.width,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: myConstants.primaryColor,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                        color: myConstants.primaryColor.withOpacity(.5),
+                        offset: const Offset(0, 25),
+                        blurRadius: 10,
+                        spreadRadius: -12)
+                  ],
+                ),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned(
+                      top: -40,
+                      left: 20,
+                      child: imageUrl == ''
+                          ? const Text('')
+                          : Image.asset(
+                              'assets/${imageUrl}.png',
+                              width: 150,
+                            ),
+                    ),
+                    Positioned(
+                      bottom: 30,
+                      left: 20,
+                      child: Text(
+                        _weather?.weatherConditionCode.toString()??'',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }
