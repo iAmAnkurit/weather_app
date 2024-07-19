@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
   List<Weather> consolidateWeatherList = [];
 
   final WeatherFactory _wf = WeatherFactory(OPEN_WEATHER_API_KEY);
-
+  // https://api.openweathermap.org/data/2.5/weather?q=Delhi&appid=780c62c65436448fdd34d69bb9d7b895&lang=en'
   Weather? _weather;
 
   void getWeatherData(String loc) {
@@ -46,11 +46,9 @@ class _HomeState extends State<Home> {
       maxTemp = _weather?.tempMax?.celsius?.round() ?? 0;
       currentDate =
           DateFormat('EEEE, d MMMM').format(_weather?.date ?? DateTime.now());
-      imageUrl = _weather?.weatherDescription
-              ?.toString()
-              .replaceAll(' ', '')
-              .toLowerCase() ??
-          '';
+
+      imageUrl =
+          Constants.getWeatherMappedData(_weather?.weatherConditionCode ?? 0);
     });
     _wf.fiveDayForecastByCityName(loc).then((w) {
       setState(() {
@@ -67,6 +65,15 @@ class _HomeState extends State<Home> {
     }
     getWeatherData(location);
   }
+
+  final Shader linearGradient = const LinearGradient(
+    colors: <Color>[Color(0xffABCFF2), Color(0xff9AC6FC)],
+  ).createShader(const Rect.fromLTWH(
+    0.0,
+    0.0,
+    200.0,
+    70.0,
+  ));
 
   @override
   Widget build(BuildContext context) {
@@ -176,16 +183,111 @@ class _HomeState extends State<Home> {
                       bottom: 30,
                       left: 20,
                       child: Text(
-                        _weather?.weatherConditionCode.toString()??'',
+                        _weather?.weatherMain ?? '',
                         style:
                             const TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ),
+                    Positioned(
+                        top: 20,
+                        right: 20,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                temperature.toString(),
+                                style: TextStyle(
+                                  fontSize: 80,
+                                  fontWeight: FontWeight.bold,
+                                  foreground: Paint()..shader = linearGradient,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'o',
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                foreground: Paint()..shader = linearGradient,
+                              ),
+                            ),
+                          ],
+                        )),
                   ],
                 ),
               ),
+              const SizedBox(
+                height: 50,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    weatherItem(
+                      text: 'Wind speed',
+                      value: windSpeed,
+                      unit: 'km/h',
+                    ),
+                    weatherItem(
+                      text: 'Wind speed',
+                      value: windSpeed,
+                      unit: 'km/h',
+                    ),
+                    weatherItem(
+                      text: 'Wind speed',
+                      value: windSpeed,
+                      unit: 'km/h',
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ));
+  }
+}
+
+class weatherItem extends StatelessWidget {
+  const weatherItem({
+    super.key,
+    required this.value,
+    required this.text,
+    required this.unit,
+  });
+
+  final int value;
+  final String text;
+  final String unit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          text,
+          style: const TextStyle(color: Colors.black54),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          height: 60,
+          width: 60,
+          decoration: const BoxDecoration(
+            color: Color(0xffE0E8FB),
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          child: Image.asset('assets/windspeed.png'),
+        ),
+        Text(
+          value.toString() + unit,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        )
+      ],
+    );
   }
 }
