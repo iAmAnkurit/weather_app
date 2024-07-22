@@ -5,6 +5,8 @@ import 'package:weather_app/consts.dart';
 import 'package:weather_app/models/city.dart';
 import 'package:weather_app/models/constants.dart';
 
+import '../widgets/weather_item.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -230,64 +232,120 @@ class _HomeState extends State<Home> {
                       text: 'Wind speed',
                       value: windSpeed,
                       unit: 'km/h',
+                      imageUrl: 'assets/windspeed.png',
                     ),
                     weatherItem(
-                      text: 'Wind speed',
-                      value: windSpeed,
-                      unit: 'km/h',
+                      text: 'Humidity',
+                      value: humidity,
+                      unit: '',
+                      imageUrl: 'assets/humidity.png',
                     ),
                     weatherItem(
-                      text: 'Wind speed',
-                      value: windSpeed,
-                      unit: 'km/h',
+                      text: 'Max temperature',
+                      value: maxTemp,
+                      unit: '°C',
+                      imageUrl: 'assets/max-temp.png',
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Today',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
+                  Text(
+                    'Next 7 days',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: myConstants.primaryColor),
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: consolidateWeatherList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      String today = DateTime.now().toString().substring(0, 10);
+
+                      var selectedDay = consolidateWeatherList[index]
+                          .date
+                          .toString()
+                          .substring(0, 10);
+                      var weatherImageUrl=Constants.getWeatherMappedData(consolidateWeatherList[index].weatherConditionCode ?? 0);
+                      var futureWeatherName =
+                          consolidateWeatherList[index].weatherMain.toString();
+                      var parseDate = DateTime.parse(
+                          consolidateWeatherList[index].date.toString());
+                      var newDate =
+                          DateFormat('EEE').format(parseDate).substring(0, 3);
+                      return GestureDetector(
+                        onTap: (){
+                          print(index);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          margin: const EdgeInsets.only(
+                              right: 20, bottom: 10, top: 10),
+                          width: 120,
+                          decoration: BoxDecoration(
+                            color: selectedDay == today
+                                ? myConstants.primaryColor
+                                : Colors.white,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: const Offset(0, 1),
+                                blurRadius: 5,
+                                color: selectedDay == today
+                                    ? myConstants.primaryColor
+                                    : Colors.black54.withOpacity(0.2),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${consolidateWeatherList[index]
+                                        .temperature!
+                                        .celsius!
+                                        .round()}°C',
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: selectedDay == today
+                                        ? Colors.white
+                                        : myConstants.primaryColor,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              Image.asset('assets/$weatherImageUrl.png',width: 80,),
+                              Center(
+                                child: Text(DateFormat('EEEE, H:m').format(consolidateWeatherList[index].date ?? DateTime.now()),style: TextStyle(fontSize: 12,
+                                    color:selectedDay==today?Colors.white:myConstants.primaryColor,fontWeight: FontWeight.w500),),
+                              ),
+
+                              Text(newDate,style: TextStyle(fontSize: 17,
+                              color:selectedDay==today?Colors.white:myConstants.primaryColor,fontWeight: FontWeight.w500),)
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
               )
             ],
           ),
         ));
-  }
-}
-
-class weatherItem extends StatelessWidget {
-  const weatherItem({
-    super.key,
-    required this.value,
-    required this.text,
-    required this.unit,
-  });
-
-  final int value;
-  final String text;
-  final String unit;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          text,
-          style: const TextStyle(color: Colors.black54),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        Container(
-          padding: const EdgeInsets.all(10.0),
-          height: 60,
-          width: 60,
-          decoration: const BoxDecoration(
-            color: Color(0xffE0E8FB),
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-          ),
-          child: Image.asset('assets/windspeed.png'),
-        ),
-        Text(
-          value.toString() + unit,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        )
-      ],
-    );
   }
 }
