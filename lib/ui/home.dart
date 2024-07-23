@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:weather_app/consts.dart';
 import 'package:weather_app/models/city.dart';
 import 'package:weather_app/models/constants.dart';
+import 'package:weather_app/ui/detail_page.dart';
 
 import '../widgets/weather_item.dart';
 
@@ -97,7 +98,7 @@ class _HomeState extends State<Home> {
                 ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   child: Image.asset(
-                    'assets/profile.png',
+                    'assets/dp.png',
                     width: 40,
                     height: 40,
                   ),
@@ -292,7 +293,7 @@ class _HomeState extends State<Home> {
                           DateFormat('EEE').format(parseDate).substring(0, 3);
                       return GestureDetector(
                         onTap: (){
-                          print(index);
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(consolidatedWeatherList: consolidateWeatherList,selectedId: index,location: location,)));
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 20),
